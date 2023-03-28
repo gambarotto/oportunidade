@@ -1,52 +1,41 @@
-### Para o envio do projeto
-Faça um ***Fork*** deste projeto, e ao finalizar faça um pull request
+# Teste Infor
 
+## What's inside?
 
-# Descrição
+This turborepo uses [npm](https://www.npmjs.com/) as a package manager. It includes the following packages/apps:
 
-Crie 2 projetos um com **NEXTJS(13)** e outro podendo ser qualquer biblioteca que utilize *react* (ex: react pwa, ionic,etc...), ambos com uma tela de autenticação, onde terão acesso à duas páginas, uma descrição do seu projeto, e uma que dará acesso ao todo-list.
-você terá liberdade para mostrar seus conhecimentos caso queira, criar telas novas, componentes, mostre-nos do que é capaz!
+### Apps and Packages
 
-## Obrigatório
+- `api`: a [node](https://nodejs.org) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `ui`: a stub React component library shared by `web` application
+- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
-A aplicação deverá ser feita em estrutura monorepo (workspaces),
-lembre-se de reutilizar o máximo de componentes possíveis entre os projetos  
+### Technologies
 
-## Requisitos
- 
- - Tela de login
-	 - Deverá ter os seguintes campos email e senha, deverá ser feita a validação e autenticação dos mesmos.
-	 - Utilizar JWT para autenticação 
- - Todo list
-	 - Os dados deverão ser armazenados via rest, as regras e design fica ao seu critério.
- - Tela de descrição
-	 - Comente sobre o projeto e as tecnologias que usou.  
+## API
 
-## Stack  
+- `Prisma`
+- `Express`
+- `Celebrate`
+- `jsonwebtoken`
+- `Bcrypt`
 
-**Front-end:** React(TS) + qualquer lib de sua preferência (material-ui, react-query, redux, etc..) 
+### Build
 
-> Usar redux toolkit será um diferencial, podendo ser utilizado em pequenas partes, não será necessário o escopo inteiro, **lembrando não é obrigatório** 
+To build all apps and packages, run the following command:
 
+```
+cd my-turborepo
+npm run build
+```
 
-**Back-end:** asp.net core (preferencialmente) ou nodejs  
+### Develop
 
-**Armazenamento:** a sua escolha, caso prefira, poderá utilizar em memória caso prefira.
+To develop all apps and packages, run the following command:
 
-  # O que será avaliado
-  
-
- 1. Designer e UX
- 2. Clean code
- 3. Reutilização de código (componentes, services), lembre-se **monorepo é obrigatório **
- 4. Qualidade de código
-
- # Lembre-se
- Você será responsável pela arquitetura da empresa, então mostre-nos do que é capaz!
- Agradecemos sua colaboração! qualquer dúvida estamos à disposição.
-
-# BOA SORTE! 
-
- 
-  
-<!-- https://stackedit.io/app -->
+```
+cd my-turborepo
+npm run dev
+```

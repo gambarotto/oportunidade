@@ -8,6 +8,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  transpilePackages: ['services-app','ui'],
 }
 
 module.exports = nextConfig

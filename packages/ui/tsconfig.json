@@ -1,0 +1,12 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "include": [".", "../../webpack.config.js"],
+  "exclude": ["dist", "build", "node_modules"],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es6",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
