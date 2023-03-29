@@ -13,7 +13,7 @@ interface SignUpProps {
   password: string;
 }
 
-export const signUp = async ({ name, email, password }: SignUpProps): Promise<User> => {
+export const signUpApi = async ({ name, email, password }: SignUpProps): Promise<User> => {
   try {
     const schema = z.object({
       name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
@@ -24,12 +24,10 @@ export const signUp = async ({ name, email, password }: SignUpProps): Promise<Us
         message: 'Password is too short, minimum length is 6 characters'
       })
     })
-
     const user = schema.parse({name,email, password});
-    return {...user, id: 'iggm' }
-/*     const response = await api.post('/', user);
+    const response = await api.post('/user', user);
 
-    return response.data; */
+    return response.data; 
     
   } catch (error: any) {
     throw new Error(error);

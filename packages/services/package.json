@@ -1,5 +1,5 @@
 {
-  "name": "services-app",
+  "name": "@infor/services",
   "version": "0.0.0",
   "main": "./index.ts",
   "license": "MIT",

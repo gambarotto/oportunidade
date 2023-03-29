@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@infor/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -17,8 +17,8 @@
     "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "services-app": "*",
-    "ui": "*",
+    "@infor/services": "*",
+    "@infor/ui": "*",
     "zod": "^3.21.4"
   },
   "devDependencies": {

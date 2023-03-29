@@ -1,19 +1,23 @@
 'use client'
 import { Button, Grid, Link, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
-import { signUp } from "services-app";
+import { signUpApi } from "@infor/services";
+
 import Input from "../../../components/Input";
+import { useDispatch } from "react-redux";
+import { signUp } from '../../../redux/features/user/userSlice';
 
 export default function SignUp () {
   const [name, setName] = useState('');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleSignIn = useCallback(async () => {
-    const user = await signUp({name, email, password});
-    console.log(user)
+    const user = await signUpApi({ name, email, password });
+    dispatch(signUp({ user }));
     
-  }, [email, name, password]);
+  }, [dispatch, email, name, password]);
 
   return (
     <Grid
