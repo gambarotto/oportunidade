@@ -1,6 +1,6 @@
 import api from "./api";
 import { signUpApi, signInApi } from "./user";
-import { createTask, getTasks } from './tasks';
+import { createTask, getTasks, deleteTask, updateTask } from './tasks';
 
 export { 
   api, 
@@ -8,4 +8,6 @@ export {
   signInApi,
   createTask,
   getTasks,
+  deleteTask,
+  updateTask
 }

@@ -92,6 +92,7 @@ class TasksController {
       });
       return res.json({ message: 'task deleted' });
     } catch (error) {
+      console.log(error);
       throw new AppError('task not found', 404);
     }
   }

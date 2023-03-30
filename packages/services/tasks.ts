@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import api from './api';
 import { NewTaskProps, TaskProps } from './types';
 
@@ -5,7 +6,10 @@ api.defaults.headers.authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
 
 export const createTask = async ({ content }: NewTaskProps): Promise<TaskProps> => {
   try {
-    const response = await api.post('/task', { content });
+    const schema = z.string().min(1);
+    const task = schema.parse(content);
+    
+    const response = await api.post('/task', { content: task });
     return response.data
   } catch (error: any) {
     throw new Error(error);
@@ -15,6 +19,21 @@ export const getTasks = async (): Promise<TaskProps[]> => {
   try {
     const response = await api.get('/task');
     return response.data
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+export const deleteTask = async (task: TaskProps):Promise<void> => {
+  try {
+    await api.delete(`/task/${task.id}`);
+  } catch (error:any) {
+    throw new Error(error);
+  }
+}
+export const updateTask = async (task: TaskProps): Promise<TaskProps> => {
+  try {
+    const response = await api.patch(`/task/${task.id}`, task);
+    return response.data;
   } catch (error: any) {
     throw new Error(error);
   }
