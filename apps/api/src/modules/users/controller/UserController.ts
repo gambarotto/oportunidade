@@ -21,7 +21,8 @@ class UserController {
           passwordHash,
         },
       });
-      return res.json(user);
+
+      return res.json({ id: user.id, name: user.name, email: user.email });
     } catch (error: any) {
       throw new AppError('Error creating user', 400);
     }
@@ -29,18 +30,17 @@ class UserController {
 
   async index(req: Request, res: Response): Promise<Response> {
     const { id } = req.user;
-    let user;
     try {
-      user = await prisma.user.findUnique({
+      const user = await prisma.user.findUnique({
         where: { id },
       });
       if (!user) {
         return res.status(404).json({ message: 'user not found' });
       }
+      return res.json({ id: user.id, name: user.name, email: user.email });
     } catch (error: any) {
       throw new AppError('user not found', 404);
     }
-    return res.json(user);
   }
 
   async update(req: Request, res: Response): Promise<Response> {
@@ -83,7 +83,11 @@ class UserController {
           passwordHash: newPassword || user?.passwordHash,
         },
       });
-      return res.json(updatedUser);
+      return res.json({
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+      });
     } catch (error) {
       res.status(500).json({ Message: 'Error updating user' });
       throw new AppError('Error on update', 500);

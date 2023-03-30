@@ -1,25 +1,23 @@
 'use client'
-import { Button, Grid, Link, Stack, Typography } from "@mui/material";
-import { useCallback, useState } from "react";
-import { signUpApi } from "@infor/services";
-
-
-import { useDispatch } from "react-redux";
-import { signUp } from '../../../redux/features/user/userSlice';
+import { signInApi } from "@infor/services";
 import { ButtonContainer, Input } from "@infor/ui";
+import { Grid, Link, Stack, Typography } from "@mui/material";
+import { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { signIn, useAppSelector } from "../../../redux/features/user/userSlice";
 
-export default function SignUp () {
-  const [name, setName] = useState('');
+export default function SignIn () {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const isLogged = useAppSelector((state) => state.user.id);
+
   const dispatch = useDispatch();
 
   const handleSignIn = useCallback(async () => {
-    const user = await signUpApi({ name, email, password });
-    dispatch(signUp({ user }));
-    
-  }, [dispatch, email, name, password]);
-
+    const user = await signInApi({ email, password });
+    dispatch(signIn(user));
+  }, [dispatch, email, password]);
   return (
     <Grid
       container
@@ -42,7 +40,7 @@ export default function SignUp () {
             color="WindowText"
             marginBottom={2}
           >
-            Sign Up
+            Login
           </Typography>
           <Typography
             variant="subtitle1"
@@ -51,58 +49,48 @@ export default function SignUp () {
             color="gray"
             style={{ fontSize: 14 }}
           >
-            Oba! será maravilhoso ter você com a gente!
+            Seja bem vindo, faça login para acessar sua lista
           </Typography>
         </Stack>
-        <Stack>
-          <Input
-            inputId="name"
-            inputType="name"
-            inputWidth="50ch"
-            inputText="Nome"
-            inputLabel="name"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            inputId="email"
-            inputType="email"
-            inputWidth="50ch"
-            inputText="E-mail"
-            inputLabel="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            inputId="password"
-            inputType="password"
-            inputWidth="50ch"
-            inputText="Senha"
-            inputLabel="senha"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Stack>
+        <Input
+          inputId="email"
+          inputType="email"
+          inputWidth="50ch"
+          inputText="E-mail"
+          inputLabel="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          inputId="password"
+          inputType="password"
+          inputText="Senha"
+          inputLabel="senha"
+          inputWidth="50ch"
+          onChange={(e) => setPassword(e.target.value)}
+        />
         <Stack
           direction="column"
           justifyContent="flex-end"
           marginBottom={2}
           width="50ch"
         >
-          <ButtonContainer 
-            variant="contained" 
-            size="large" 
-            style={{ marginTop: 24 }}
+          <ButtonContainer
             onClick={handleSignIn}
-            >
+            variant="contained"
+            size="large"
+            style={{ marginTop: 24 }}
+          >
             Entrar
           </ButtonContainer>
         </Stack>
         <Stack justifyContent="center" alignItems="flex-end" width="50ch">
           <Link
-            href={"/"}
+            href={"/signUp"}
             underline="none"
             fontFamily="roboto"
             style={{ fontSize: 14 }}
           >
-            {"Voltar para login"}
+            {"Não possui uma conta?"}
           </Link>
         </Stack>
       </Grid>

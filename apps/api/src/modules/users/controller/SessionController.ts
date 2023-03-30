@@ -29,7 +29,15 @@ class SessionController {
         subject: String(user?.id),
         expiresIn,
       });
-      return res.json({ token, user });
+
+      return res.json({
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+      });
     } catch (error: any) {
       throw new AppError('Error creating user', 400);
     }
