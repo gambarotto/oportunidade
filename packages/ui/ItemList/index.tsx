@@ -1,7 +1,7 @@
 'use client'
 // eslint-disable-next-line no-use-before-define
-import React, { useCallback, useState, useRef } from 'react'
-import { IconButton, InputBase, Divider, Checkbox } from '@mui/material'
+import React, { useCallback, useState } from 'react'
+import { IconButton, Divider, Checkbox, InputBase } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { Edit, Check, Delete } from '@mui/icons-material'
 import { TaskProps } from '../../services/types'
@@ -11,7 +11,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
 interface ListItemProps {
   task: TaskProps
-  removeTask: UseMutationResult<void, unknown, TaskProps, unknown>
+  removeTask: UseMutationResult<TaskProps, unknown, TaskProps, unknown>
   updateTask: UseMutationResult<TaskProps, unknown, TaskProps, unknown>
 }
 
@@ -20,17 +20,33 @@ export default function ItemList({
   removeTask,
   updateTask,
 }: ListItemProps) {
-  const [isChecked, setIsChecked] = useState(false)
+  const [isChecked, setIsChecked] = useState(task.done)
   const [isEditing, setIsEditing] = useState(false)
   const [inputText, setInputText] = useState(task.content)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleEdit = useCallback(() => {
-    if (isEditing) {
+    if (isEditing && inputText !== task.content) {
+      task.content = inputText
       updateTask.mutate({ ...task, content: inputText })
     }
     setIsEditing(!isEditing)
   }, [inputText, isEditing, task, updateTask])
+
+  const handleChangeText = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event) {
+        const target = event.target as HTMLInputElement
+        setInputText(target.value)
+      }
+    },
+    [],
+  )
+  const handleCheckBox = useCallback(() => {
+    task.done = !isChecked
+    updateTask.mutate({ ...task, done: !isChecked })
+    setIsChecked(!isChecked)
+  }, [isChecked, task, updateTask])
+
   return (
     <Paper
       component="form"
@@ -42,13 +58,9 @@ export default function ItemList({
         marginBottom: 1,
       }}
     >
-      <Checkbox
-        {...label}
-        defaultChecked={false}
-        onClick={() => setIsChecked(!isChecked)}
-      />
+      <Checkbox {...label} checked={isChecked} onClick={handleCheckBox} />
+
       <InputBase
-        ref={inputRef}
         sx={{
           ml: 1,
           flex: 1,
@@ -58,7 +70,7 @@ export default function ItemList({
         inputProps={{ 'aria-label': 'search google maps' }}
         color="primary"
         readOnly={!isEditing}
-        onChange={(e) => setInputText(e.target.value)}
+        onChange={handleChangeText}
       />
       <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
       <IconButton

@@ -4,18 +4,24 @@ import { createTask, deleteTask, getTasks, updateTask } from "@infor/services";
 import { ItemList } from "@infor/ui";
 import { Add } from "@mui/icons-material";
 import { Grid, IconButton, List, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useDispatch } from "react-redux";
+import { addTask, deleteReduxTask, getAllTasks, updateReduxTask, useAppSelectorTask } from "../../redux/features/task/taskSlice";
 
+//TODO: get all tasks and set on redux
 export default function Todo () {
   const [newTask, setNewTask] = useState('');
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const query = useQuery("todos", getTasks);
+
   const mutationCreateTask = useMutation(createTask, {
     onSuccess: (data) => {
       queryClient.invalidateQueries("todos");
       setNewTask('')
+      dispatch(addTask({...data}));
     },
     onError: (error) => {
       console.log(error);
@@ -25,23 +31,34 @@ export default function Todo () {
     mutationCreateTask.mutate({content: newTask});
   };
   const mutationDeleteTask = useMutation(deleteTask, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries("todos");
-      console.log("deletou");
+      dispatch(deleteReduxTask(data))
     },
     onError: (error) => {
       console.log(error);
     },
   });
   const mutationUpdateTask = useMutation(updateTask, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries("todos");
-
+      dispatch(updateReduxTask(data))
     },
     onError: (error) => {
       console.log(error);
     },
   });
+
+  useEffect(() => {
+    async function loadTodos(){
+      const data = await queryClient.fetchQuery('initialTasks', getTasks)
+      console.log("initialTasks");
+      
+      dispatch(getAllTasks(data))
+    }
+    loadTodos()
+  }, [dispatch, queryClient]);
+
   return (
     <Grid
       container

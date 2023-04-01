@@ -23,16 +23,17 @@ export const getTasks = async (): Promise<TaskProps[]> => {
     throw new Error(error);
   }
 }
-export const deleteTask = async (task: TaskProps):Promise<void> => {
+export const deleteTask = async (task: TaskProps):Promise<TaskProps> => {
   try {
     await api.delete(`/task/${task.id}`);
+    return task
   } catch (error:any) {
     throw new Error(error);
   }
 }
 export const updateTask = async (task: TaskProps): Promise<TaskProps> => {
   try {
-    const response = await api.patch(`/task/${task.id}`, task);
+    const response = await api.put(`/task/${task.id}`, task);
     return response.data;
   } catch (error: any) {
     throw new Error(error);

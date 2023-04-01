@@ -2,8 +2,7 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useDispatch } from "react-redux";
-import { ReactQueryDevtools } from "react-query/devtools";
-import { getUserLocalStorage, signIn, useAppSelector } from "../redux/features/user/userSlice"
+import { getUserLocalStorage } from "../redux/features/user/userSlice"
 import SignIn from "./(auth)/signIn/page";
 import Todo from "./todo/page";
 
@@ -19,7 +18,6 @@ export default function Home() {
   return (
     <QueryClientProvider client={queryClient}>
       <Todo />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
