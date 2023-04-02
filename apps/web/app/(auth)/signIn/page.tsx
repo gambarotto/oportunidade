@@ -1,23 +1,38 @@
 'use client'
-import { signInApi } from "@infor/services";
+import { reduxApi, signInApi } from "@infor/services";
 import { ButtonContainer, Input } from "@infor/ui";
 import { Grid, Link, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { signIn, useAppSelector } from "../../../redux/features/user/userSlice";
 
 export default function SignIn () {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const isLogged = useAppSelector((state) => state.user.id);
-
+  const router = useRouter();
+  const [createSession, result] = reduxApi.user.useCreateSessionMutation();
   const dispatch = useDispatch();
-
+  
   const handleSignIn = useCallback(async () => {
-    const user = await signInApi({ email, password });
-    dispatch(signIn(user));
-  }, [dispatch, email, password]);
+    const user = signInApi({ email, password });
+    const session = await createSession(user).unwrap()
+    console.log(session);
+    
+    //dispatch(reduxApi.user.signIn(session))
+    router.push("/todo");
+  }, [createSession, dispatch, email, password, router]);
+
+  const successLogin = useCallback(() => {
+    router.push("/todo");
+    dispatch(reduxApi.user.signIn(result.data))
+  }, [dispatch, result.data, router]);
+
+  if (result.isSuccess) {
+    //successLogin()
+  }
+  if (result.isError) {
+    console.log("erro ao logar");
+  }
   return (
     <Grid
       container

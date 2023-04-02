@@ -2,15 +2,19 @@ import { api } from '@infor/services';
 import { SessionUser } from '@infor/services/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
-import { KEY_LOCALSTORAGE_TOKEN, KEY_LOCALSTORAGE_USER } from '../../../constraints/localStorage';
+import { RootState } from '../../storeConfiguration';
+
+export const KEY_LOCALSTORAGE_USER = '@infor:user';
+export const KEY_LOCALSTORAGE_TOKEN = '@infor:token';
 
 export interface UserStateProps {
-  user:{
+  user: {
     id?: string;
     name: string;
     email: string;
   },
   token?: string;
+  isLoading: boolean;
 }
 
 const loadInitialUser = (): UserStateProps => {
@@ -21,6 +25,7 @@ const loadInitialUser = (): UserStateProps => {
       email: ''
     },
     token: '',
+    isLoading: false,
   }
   try {
     const userStorage = window.localStorage.getItem(KEY_LOCALSTORAGE_USER);
@@ -28,20 +33,28 @@ const loadInitialUser = (): UserStateProps => {
     if (userStorage === null || tokenStorage === null) {
       return emptyState as UserStateProps;
     }
-    const state = { 
-      user: JSON.parse(userStorage), 
-      token: tokenStorage
+    const state = {
+      user: JSON.parse(userStorage),
+      token: JSON.parse(tokenStorage)
     };
     const initialState = state;
-    console.log('initial state ',initialState);
-    
+    console.log('initial state ', initialState);
+
     return initialState as UserStateProps;
   } catch (err) {
     return emptyState as UserStateProps;
   }
 };
 
-const initialState: UserStateProps = loadInitialUser()
+const initialState: UserStateProps = {
+  user: {
+    id: '',
+    name: '',
+    email: ''
+  },
+  token: '',
+  isLoading: true,
+}
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -54,21 +67,18 @@ export const userSlice = createSlice({
           email: ''
         },
         token: '',
+        isLoading: false
       }
       const userStorage = window.localStorage.getItem(KEY_LOCALSTORAGE_USER);
       const tokenStorage = window.localStorage.getItem(KEY_LOCALSTORAGE_TOKEN);
-      if (userStorage === null || tokenStorage === null) {
+      if (userStorage?.length === 0 || tokenStorage?.length === 0) {
         state = emptyState as UserStateProps;
       }
       state.user = JSON.parse(userStorage as string);
-      state.token = tokenStorage as string;
+      state.token = JSON.parse(tokenStorage as string);
+      state.isLoading = false;
     },
-    signUp: (state, { payload: { user } }:PayloadAction<UserStateProps>) => {
-      state.user = user;
-    },
-    signIn: (state, { payload: { user, token } }:PayloadAction<SessionUser>) => {
-      //TODO: axios header token
-      api.defaults.headers.authorization = `Bearer ${token}`;
+    signIn: (state, { payload: { user, token } }: PayloadAction<SessionUser>) => {
       //TODO: update user state
       state.user = user;
       // update token state
@@ -77,14 +87,10 @@ export const userSlice = createSlice({
       window.localStorage.setItem(KEY_LOCALSTORAGE_USER, JSON.stringify(state.user))
       window.localStorage.setItem(KEY_LOCALSTORAGE_TOKEN, JSON.stringify(state.token))
     },
-    signOut: (state) => {
-      //TODO: update user state with ''
-
-    }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { getUserLocalStorage, signUp, signIn, signOut } = userSlice.actions
-export const useAppSelector: TypedUseSelectorHook<UserStateProps> = useSelector
+export const selectUser = (state: UserStateProps) => state.user
 export default userSlice.reducer
+export const { getUserLocalStorage, signIn } = userSlice.actions

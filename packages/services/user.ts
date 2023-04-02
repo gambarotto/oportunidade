@@ -2,11 +2,11 @@ import { z } from 'zod';
 import api from './api';
 import { SessionUser, SignInProps, SignUpProps, UserProps } from "./types";
 
-export const signUpApi = async ({ 
+export const signUpApi = ({ 
   name, 
   email, 
   password 
-}: SignUpProps): Promise<UserProps> => {
+}: SignUpProps): SignUpProps => {
   try {
     const schema = z.object({
       name: z.string({ required_error: 'Name is required' }).min(1, { message: 'Name is required' }),
@@ -18,24 +18,22 @@ export const signUpApi = async ({
       })
     })
     const user = schema.parse({name,email, password});
-    const response = await api.post('/user', user);
 
-    return response.data; 
+    return user
     
   } catch (error: any) {
     throw new Error(error);
   }
 }
-export const signInApi = async ({ email, password }:SignInProps): Promise<SessionUser> => {
+export const signInApi = ({ email, password }: SignInProps): SignInProps => {
   try {
     const schema = z.object({
       email: z.string().email({message: 'Email is required'}),
       password: z.string().min(6),
     });
     const sessionData = schema.parse({email, password});
-    const response = await api.post('/session',sessionData)
 
-    return response.data;
+    return sessionData;
   } catch (error: any) {
     throw new Error(error);
   }

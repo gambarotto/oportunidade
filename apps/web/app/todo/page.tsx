@@ -1,64 +1,34 @@
 'use client'
 
-import { createTask, deleteTask, getTasks, updateTask } from "@infor/services";
+import { useCallback, useState } from "react";
+import { reduxApi } from "@infor/services";
 import { ItemList } from "@infor/ui";
 import { Add } from "@mui/icons-material";
 import { Grid, IconButton, List, Stack, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
-import { addTask, deleteReduxTask, getAllTasks, updateReduxTask, useAppSelectorTask } from "../../redux/features/task/taskSlice";
 
-//TODO: get all tasks and set on redux
 export default function Todo () {
   const [newTask, setNewTask] = useState('');
+  
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    isSuccess,
+  } = reduxApi.tasks.useTasksQuery([]);
 
-  const queryClient = useQueryClient();
-  const dispatch = useDispatch();
-  const query = useQuery("todos", getTasks);
+  const [addTask] = reduxApi.tasks.useAddTaskMutation();
 
-  const mutationCreateTask = useMutation(createTask, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries("todos");
-      setNewTask('')
-      dispatch(addTask({...data}));
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-  const handleCreateTask = () => {
-    mutationCreateTask.mutate({content: newTask});
-  };
-  const mutationDeleteTask = useMutation(deleteTask, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries("todos");
-      dispatch(deleteReduxTask(data))
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-  const mutationUpdateTask = useMutation(updateTask, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries("todos");
-      dispatch(updateReduxTask(data))
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+  const handleCreateTask = useCallback(() => {
+    addTask(newTask);
+    setNewTask('');
+  }, [addTask, newTask]);
 
-  useEffect(() => {
-    async function loadTodos(){
-      const data = await queryClient.fetchQuery('initialTasks', getTasks)
-      console.log("initialTasks");
-      
-      dispatch(getAllTasks(data))
-    }
-    loadTodos()
-  }, [dispatch, queryClient]);
-
+  if(isLoading) {
+    return <h1>loading</h1>
+  }
+  if (isError) {
+    return <h1>error</h1>;
+  }
   return (
     <Grid
       container
@@ -91,19 +61,17 @@ export default function Todo () {
           />
           <IconButton
             color="primary"
-            aria-label="add to shopping cart"
+            aria-label="add to-do"
             onClick={handleCreateTask}
           >
             <Add />
           </IconButton>
         </Stack>
         <List>
-          {query.data?.map((item) => (
+          { isSuccess && tasks.map((item) => (
             <ItemList
               key={item.id}
               task={item}
-              removeTask={mutationDeleteTask}
-              updateTask={mutationUpdateTask}
             />
           ))}
         </List>

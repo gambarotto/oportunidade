@@ -4,7 +4,6 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { Providers } from "../redux/Provider";
-import ProviderReactQuery from "../react-query/Provider";
 
 export const metadata = {
   title: "InforCFC",
@@ -17,9 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <Providers>
-          <ProviderReactQuery>
             {children}
-          </ProviderReactQuery>  
         </Providers>
       </body>
     </html>

@@ -1,24 +1,26 @@
 'use client'
-import { Button, Grid, Link, Stack, Typography } from "@mui/material";
+import { Grid, Link, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
-import { signUpApi } from "@infor/services";
+import { useRouter } from "next/navigation";
+import { reduxApi, signUpApi } from "@infor/services";
 
 
 import { useDispatch } from "react-redux";
-import { signUp } from '../../../redux/features/user/userSlice';
 import { ButtonContainer, Input } from "@infor/ui";
 
 export default function SignUp () {
   const [name, setName] = useState('');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
   const dispatch = useDispatch();
+  const [createUser] = reduxApi.user.useCreateUserMutation()
 
-  const handleSignIn = useCallback(async () => {
-    const user = await signUpApi({ name, email, password });
-    dispatch(signUp({ user }));
-    
-  }, [dispatch, email, name, password]);
+  const handleSignIn = useCallback( () => {
+    const user = signUpApi({ name, email, password });
+    createUser(user)
+    router.push('/signIn')
+  }, [createUser, email, name, password, router]);
 
   return (
     <Grid
@@ -92,12 +94,12 @@ export default function SignUp () {
             style={{ marginTop: 24 }}
             onClick={handleSignIn}
             >
-            Entrar
+            Criar conta
           </ButtonContainer>
         </Stack>
         <Stack justifyContent="center" alignItems="flex-end" width="50ch">
           <Link
-            href={"/"}
+            href={"/signIn"}
             underline="none"
             fontFamily="roboto"
             style={{ fontSize: 14 }}

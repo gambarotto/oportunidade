@@ -5,29 +5,25 @@ import { IconButton, Divider, Checkbox, InputBase } from '@mui/material'
 import Paper from '@mui/material/Paper'
 import { Edit, Check, Delete } from '@mui/icons-material'
 import { TaskProps } from '../../services/types'
-import { UseMutationResult } from 'react-query'
+import { reduxApi } from '@infor/services'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } }
 
 interface ListItemProps {
   task: TaskProps
-  removeTask: UseMutationResult<TaskProps, unknown, TaskProps, unknown>
-  updateTask: UseMutationResult<TaskProps, unknown, TaskProps, unknown>
 }
 
-export default function ItemList({
-  task,
-  removeTask,
-  updateTask,
-}: ListItemProps) {
+export default function ItemList({ task }: ListItemProps) {
   const [isChecked, setIsChecked] = useState(task.done)
   const [isEditing, setIsEditing] = useState(false)
   const [inputText, setInputText] = useState(task.content)
 
+  const [updateTask] = reduxApi.tasks.useUpdateTaskMutation()
+  const [deleteTask] = reduxApi.tasks.useDeleteTaskMutation()
+
   const handleEdit = useCallback(() => {
     if (isEditing && inputText !== task.content) {
-      task.content = inputText
-      updateTask.mutate({ ...task, content: inputText })
+      updateTask({ ...task, content: inputText })
     }
     setIsEditing(!isEditing)
   }, [inputText, isEditing, task, updateTask])
@@ -42,8 +38,11 @@ export default function ItemList({
     [],
   )
   const handleCheckBox = useCallback(() => {
-    task.done = !isChecked
-    updateTask.mutate({ ...task, done: !isChecked })
+    // task.done = !isChecked
+    const data = { ...task, done: !isChecked }
+    console.log(data)
+
+    updateTask(data)
     setIsChecked(!isChecked)
   }, [isChecked, task, updateTask])
 
@@ -86,7 +85,7 @@ export default function ItemList({
         sx={{ p: '6px' }}
         aria-label="edit"
         onClick={() => {
-          removeTask.mutate(task)
+          deleteTask(task)
         }}
       >
         <Delete color="info" />
